@@ -1,4 +1,4 @@
-import { verifyInteractionRequest } from "../discord/verify-incoming-request"
+import { verifyInteractionRequest } from "../../discord/verify-incoming-request"
 import {
   MessageFlags,
 } from "discord-api-types/v10"
