@@ -1,14 +1,7 @@
-import { commands, RandomPicType } from "@/commands"
 import { verifyInteractionRequest } from "@/discord/verify-incoming-request"
 import {
-  APIInteractionDataOptionBase,
-  ApplicationCommandOptionType,
-  InteractionResponseType,
-  InteractionType,
   MessageFlags,
 } from "discord-api-types/v10"
-import { NextResponse } from "next/server"
-import { getRandomPic } from "./random-pic"
 
 /**
  * Use edge runtime which is faster, cheaper, and has no cold-boot.
@@ -24,7 +17,7 @@ const ROOT_URL = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : process.env.ROOT_URL || "http://localhost:3000"
 
-function capitalizeFirstLetter(s: string) {
+function capitalizeFirstLetter(s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
@@ -33,8 +26,8 @@ function capitalizeFirstLetter(s: string) {
  *
  * @see https://discord.com/developers/docs/interactions/receiving-and-responding#receiving-an-interaction
  */
-export async function POST(request: Request) {
-  const verifyResult = await verifyInteractionRequest(request, DISCORD_APP_PUBLIC_KEY!)
+export async function POST(request) {
+  const verifyResult = await verifyInteractionRequest(request, DISCORD_APP_PUBLIC_KEY)
   if (!verifyResult.isValid || !verifyResult.interaction) {
     return new NextResponse("Invalid request", { status: 401 })
   }
@@ -77,7 +70,6 @@ export async function POST(request: Request) {
         }
 
         const option = interaction.data.options[0]
-        // @ts-ignore
         const idOrName = String(option.value).toLowerCase()
 
         try {
@@ -85,7 +77,7 @@ export async function POST(request: Request) {
             return res.json()
           })
           const types = pokemon.types.reduce(
-            (prev: string[], curr: { type: { name: string } }) => [...prev, capitalizeFirstLetter(curr.type.name)],
+            (prev, curr) => [...prev, capitalizeFirstLetter(curr.type.name)],
             []
           )
 
@@ -138,19 +130,6 @@ export async function POST(request: Request) {
         } catch (error) {
           throw new Error("Something went wrong :(")
         }
-
-      case commands.randompic.name:
-        const { options } = interaction.data
-        if (!options) {
-          return new NextResponse("Invalid request", { status: 400 })
-        }
-
-        const { value } = options[0] as APIInteractionDataOptionBase<ApplicationCommandOptionType.String, RandomPicType>
-        const embed = await getRandomPic(value)
-        return NextResponse.json({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: { embeds: [embed] },
-        })
 
       default:
       // Pass through, return error at end of function
