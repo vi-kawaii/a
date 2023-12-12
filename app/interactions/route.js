@@ -1,11 +1,11 @@
-import { verifyInteractionRequest } from "../../discord/verify-incoming-request"
+import { verifyInteractionRequest } from "../verify-incoming-request";
 import {
   MessageFlags,
   InteractionResponseType,
   InteractionType,
-} from "discord-api-types/v10"
-import { commands } from "../../commands"
-import { NextResponse } from "next/server"
+} from "discord-api-types/v10";
+import { commands } from "../commands";
+import { NextResponse } from "next/server";
 
 /**
  * Use edge runtime which is faster, cheaper, and has no cold-boot.
@@ -13,16 +13,16 @@ import { NextResponse } from "next/server"
  *
  * @see https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes
  */
-export const runtime = "edge"
+export const runtime = "edge";
 
 // Your public key can be found on your application in the Developer Portal
-const DISCORD_APP_PUBLIC_KEY = process.env.DISCORD_APP_PUBLIC_KEY
+const DISCORD_APP_PUBLIC_KEY = process.env.DISCORD_APP_PUBLIC_KEY;
 const ROOT_URL = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : process.env.ROOT_URL || "http://localhost:3000"
+  : process.env.ROOT_URL || "http://localhost:3000";
 
 function capitalizeFirstLetter(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1)
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 /**
@@ -31,27 +31,30 @@ function capitalizeFirstLetter(s) {
  * @see https://discord.com/developers/docs/interactions/receiving-and-responding#receiving-an-interaction
  */
 export async function POST(request) {
-  const verifyResult = await verifyInteractionRequest(request, DISCORD_APP_PUBLIC_KEY)
+  const verifyResult = await verifyInteractionRequest(
+    request,
+    DISCORD_APP_PUBLIC_KEY
+  );
   if (!verifyResult.isValid || !verifyResult.interaction) {
-    return new NextResponse("Invalid request", { status: 401 })
+    return new NextResponse("Invalid request", { status: 401 });
   }
-  const { interaction } = verifyResult
+  const { interaction } = verifyResult;
 
   if (interaction.type === InteractionType.Ping) {
     // The `PING` message is used during the initial webhook handshake, and is
     // required to configure the webhook in the developer portal.
-    return NextResponse.json({ type: InteractionResponseType.Pong })
+    return NextResponse.json({ type: InteractionResponseType.Pong });
   }
 
   if (interaction.type === InteractionType.ApplicationCommand) {
-    const { name } = interaction.data
+    const { name } = interaction.data;
 
     switch (name) {
       case commands.ping.name:
         return NextResponse.json({
           type: InteractionResponseType.ChannelMessageWithSource,
           data: { content: `Pong` },
-        })
+        });
 
       case commands.invite.name:
         return NextResponse.json({
@@ -60,7 +63,7 @@ export async function POST(request) {
             content: `Click this link to add NextBot to your server: https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_APP_ID}&permissions=2147485696&scope=bot%20applications.commands`,
             flags: MessageFlags.Ephemeral,
           },
-        })
+        });
 
       case commands.pokemon.name:
         if (!interaction.data.options || interaction.data.options?.length < 1) {
@@ -70,20 +73,22 @@ export async function POST(request) {
               content: "Oops! Please enter a Pokemon name or Pokedex number.",
               flags: MessageFlags.Ephemeral,
             },
-          })
+          });
         }
 
-        const option = interaction.data.options[0]
-        const idOrName = String(option.value).toLowerCase()
+        const option = interaction.data.options[0];
+        const idOrName = String(option.value).toLowerCase();
 
         try {
-          const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${idOrName}`).then((res) => {
-            return res.json()
-          })
+          const pokemon = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${idOrName}`
+          ).then((res) => {
+            return res.json();
+          });
           const types = pokemon.types.reduce(
             (prev, curr) => [...prev, capitalizeFirstLetter(curr.type.name)],
             []
-          )
+          );
 
           const r = {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -107,7 +112,7 @@ export async function POST(request) {
                 },
               ],
             },
-          }
+          };
           return NextResponse.json({
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
@@ -130,9 +135,9 @@ export async function POST(request) {
                 },
               ],
             },
-          })
+          });
         } catch (error) {
-          throw new Error("Something went wrong :(")
+          throw new Error("Something went wrong :(");
         }
 
       default:
@@ -140,5 +145,5 @@ export async function POST(request) {
     }
   }
 
-  return new NextResponse("Unknown command", { status: 400 })
+  return new NextResponse("Unknown command", { status: 400 });
 }
