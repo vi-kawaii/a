@@ -4,6 +4,7 @@ import {
   InteractionResponseType,
   InteractionType,
 } from "discord-api-types/v10"
+import { commands } from "../../commands"
 
 /**
  * Use edge runtime which is faster, cheaper, and has no cold-boot.
