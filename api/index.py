@@ -15,9 +15,8 @@ app.config["DISCORD_CLIENT_SECRET"] = os.environ["DISCORD_CLIENT_SECRET"]
 app.config["DONT_REGISTER_WITH_DISCORD"] = True
 
 @discord.command()
-def ping(ctx, pong: str = "pong"):
-    f"Respond with a friendly 'pong'!"
-    return f"{pong} with signature verification!"
+def a(ctx, text):
+    return f"{text}"
 
 discord.set_route("/interactions")
 discord.update_commands()
