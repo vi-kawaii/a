@@ -1,5 +1,5 @@
 Flask
 flask-discord-interactions
 python-dotenv
-chatterbot
+chatterbot==1.0.2
 requests
