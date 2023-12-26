@@ -1,4 +1,5 @@
 import sys
+from chatterbot import ChatBot
 from flask import Flask
 from flask_discord_interactions import DiscordInteractions
 import os
@@ -14,9 +15,11 @@ app.config["DISCORD_CLIENT_SECRET"] = os.environ["DISCORD_CLIENT_SECRET"]
 
 app.config["DONT_REGISTER_WITH_DISCORD"] = True
 
+bot = ChatBot("a")
+
 @discord.command()
 def a(ctx, text: str):
-    return f"{text}"
+    return bot.get_response(text)
 
 discord.set_route("/interactions")
 discord.update_commands()
