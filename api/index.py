@@ -18,5 +18,9 @@ app.config["DONT_REGISTER_WITH_DISCORD"] = True
 def a(ctx, text: str):
     return f"You wrote {text}"
 
+@discord.command()
+def ping(ctx):
+    return "My answer is PONG"
+
 discord.set_route("/interactions")
 discord.update_commands(guild_id=os.environ["TESTING_GUILD"])
