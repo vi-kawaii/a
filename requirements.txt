@@ -2,3 +2,4 @@ Flask
 flask-discord-interactions
 python-dotenv
 requests
+git+https://github.com/ShoneGK/ChatterPy
