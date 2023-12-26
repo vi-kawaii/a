@@ -22,4 +22,4 @@ def a(ctx, text: str):
     return bot.get_response(text)
 
 discord.set_route("/interactions")
-discord.update_commands()
+discord.update_commands(guild_id=os.environ["TESTING_GUILD"])
