@@ -1,5 +1,4 @@
 import sys
-from chatterbot import ChatBot
 from flask import Flask
 from flask_discord_interactions import DiscordInteractions
 import os
