@@ -15,11 +15,9 @@ app.config["DISCORD_CLIENT_SECRET"] = os.environ["DISCORD_CLIENT_SECRET"]
 
 app.config["DONT_REGISTER_WITH_DISCORD"] = True
 
-bot = ChatBot("a")
-
 @discord.command()
 def a(ctx, text: str):
-    return bot.get_response(text)
+    return f"You wrote {text}"
 
 discord.set_route("/interactions")
 discord.update_commands(guild_id=os.environ["TESTING_GUILD"])
