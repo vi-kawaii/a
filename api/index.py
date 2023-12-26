@@ -15,7 +15,7 @@ app.config["DISCORD_CLIENT_SECRET"] = os.environ["DISCORD_CLIENT_SECRET"]
 app.config["DONT_REGISTER_WITH_DISCORD"] = True
 
 @discord.command()
-def a(ctx, text):
+def a(ctx, text: str):
     return f"{text}"
 
 discord.set_route("/interactions")
