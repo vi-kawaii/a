@@ -3,18 +3,31 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+for x in []:
+    res = requests.delete(
+        "https://discord.com/api/v10/applications/" + os.environ["DISCORD_CLIENT_ID"] + "/commands/" + x,
+        headers={
+            "Authorization": "Bot " + os.environ["DISCORD_CLIENT_SECRET"]
+        },
+    )
+    print(res.status_code)
 
-url = f"https://discord.com/api/v10/applications/{os.environ['DISCORD_CLIENT_ID']}/guilds/{os.environ['TESTING_GUILD']}/commands"
-
-# This is an example USER command, with a type of 2
-json = {
-    "name": "a",
-    "type": 2
-}
-
-# For authorization, you can use either your bot token
-headers = {
-    "Authorization": f"Bot {os.environ['DISCORD_CLIENT_SECRET']}"
-}
-
-r = requests.post(url, headers=headers, json=json)
+commands = [
+    {
+        "name": "a",
+        "type": 3
+    },
+    {
+        "name": "p",
+        "type": 5
+    }
+]
+for x in commands:
+    r = requests.post(
+        "https://discord.com/api/v10/applications/" + os.environ["DISCORD_CLIENT_ID"] + "/commands",
+        headers={
+            "Authorization": "Bot " + os.environ["DISCORD_CLIENT_SECRET"]
+        },
+        json=x
+    )
+    print(r.status_code)
