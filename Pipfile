@@ -15,4 +15,4 @@ textblob = "*"
 python_version = "3.8"
 
 [scripts]
-post-install = "python post_install_script.py"
+post-install = "python -m textblob.download_corpora"
