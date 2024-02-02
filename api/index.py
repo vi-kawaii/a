@@ -3,6 +3,7 @@ from flask import Flask
 from flask_discord_interactions import DiscordInteractions
 from dotenv import load_dotenv
 from textblob import TextBlob
+from langdetect import detect
 import os
 
 load_dotenv()
@@ -18,6 +19,14 @@ app.config["DONT_REGISTER_WITH_DISCORD"] = True
 
 @discord.command()
 def a(ctx, text: str):
+    # Определяем язык текста
+    language = detect(text)
+
+    # Если язык не английский, переводим текст на английский
+    if language != 'en':
+        blob = TextBlob(text)
+        text = str(blob.translate(to='en'))
+
     # Создаем объект TextBlob для анализа текста
     blob = TextBlob(text)
 
@@ -26,13 +35,13 @@ def a(ctx, text: str):
 
     # Определяем настроение на основе оценки
     if sentiment_score > 0:
-        mood = "positive"
+        mood = "позитивное"
     elif sentiment_score < 0:
-        mood = "negative"
+        mood = "негативное"
     else:
-        mood = "neutral"
+        mood = "нейтральное"
 
-    return f"You wrote: {text}\nSentiment Analysis: {mood}"
+    return f"Вы написали: {text}\nАнализ настроения: {mood}"
 
 discord.set_route("/interactions")
 discord.update_commands()
