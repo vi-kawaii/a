@@ -1,6 +1,0 @@
-Flask
-flask-discord-interactions
-python-dotenv
-requests
-textblob
-langdetect
